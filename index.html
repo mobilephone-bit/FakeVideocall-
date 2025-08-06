@@ -123,10 +123,10 @@
 </div>
 
 <div id="videoContainer">
-  <video id="videoPlayer" autoplay muted playsinline></video>
+  <video id="videoPlayer" autoplay playsinline controls></video>
 
   <div id="miniVideoContainer">
-    <video id="miniVideoPlayer" autoplay muted playsinline></video>
+    <video id="miniVideoPlayer" autoplay playsinline controls></video>
   </div>
 
   <div class="overlay">
@@ -141,7 +141,7 @@
 </div>
 
 <script>
-  // Mini video drag
+  // Drag del mini video
   (function () {
     const mini = document.getElementById('miniVideoContainer');
     let isDragging = false, startX, startY, origX, origY;
@@ -181,15 +181,18 @@
     const mainPlayer = document.getElementById('videoPlayer');
     mainPlayer.src = URL.createObjectURL(mainFile);
     mainPlayer.load();
+
     mainPlayer.play().catch(() => {
-      alert("Tocca lo schermo per avviare il video principale.");
+      alert("Tocca lo schermo per avviare il video principale con audio.");
     });
 
     if (miniFile) {
       const miniPlayer = document.getElementById('miniVideoPlayer');
       miniPlayer.src = URL.createObjectURL(miniFile);
       miniPlayer.load();
-      miniPlayer.play();
+      miniPlayer.play().catch(() => {
+        alert("Tocca lo schermo per avviare anche il mini video con audio.");
+      });
       document.getElementById('miniVideoContainer').style.display = 'block';
     }
 
@@ -206,7 +209,7 @@
     const chatBox = document.getElementById('chatBox');
     const div = document.createElement('div');
     div.className = 'chat-message';
-    div.textContent = '👤 Tu: ' + message;
+    div.textContent = 'Tu: ' + message;
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
     input.value = '';
@@ -216,11 +219,6 @@
     const file = event.target.files[0];
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) { // 2MB
-      alert("L'immagine è troppo grande. Limite massimo: 2MB.");
-      return;
-    }
-
     const reader = new FileReader();
     reader.onload = function(e) {
       const img = document.createElement('img');
@@ -229,185 +227,13 @@
       const chatBox = document.getElementById('chatBox');
       const div = document.createElement('div');
       div.className = 'chat-message';
-      div.innerHTML = '👤 Tu: <br>';
+      div.innerHTML = 'Tu: <br>';
       div.appendChild(img);
       chatBox.appendChild(div);
       chatBox.scrollTop = chatBox.scrollHeight;
     };
     reader.readAsDataURL(file);
     event.target.value = ""; // reset input
-  }
-</script>
-
-</body>
-</html>    }
-    .overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 20px;
-      pointer-events: none;
-      z-index: 5;
-    }
-    #chatBox {
-      max-height: 30%;
-      overflow-y: auto;
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      pointer-events: auto;
-      color: white;
-    }
-    .chat-message {
-      padding: 6px 10px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.1);
-      max-width: 80%;
-      word-wrap: break-word;
-    }
-    .chat-input {
-      display: flex;
-      margin-bottom: 6px;
-      gap: 5px;
-      pointer-events: auto;
-    }
-    input[type="text"] {
-      flex: 1;
-      padding: 8px;
-      font-size: 1em;
-      border-radius: 6px;
-      border: none;
-    }
-    button {
-      padding: 8px 12px;
-      font-size: 1em;
-      border: none;
-      background: #00cc66;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    #miniVideoContainer {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 200px;
-      height: 200px;
-      overflow: hidden;
-      border: 2px solid white;
-      border-radius: 10px;
-      z-index: 6;
-      cursor: move;
-      display: none;
-    }
-    #miniVideoPlayer {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  </style>
-</head>
-<body>
-
-<div id="upload">
-  <h3>Carica il video principale</h3>
-  <input type="file" id="videoInput" accept="video/*" />
-  <h3>Carica il video per la simulazione videochiamata</h3>
-  <input type="file" id="miniVideoInput" accept="video/*" />
-  <br><br>
-  <button onclick="startLive()">Avvia Live</button>
-</div>
-
-<div id="videoContainer">
-  <video id="videoPlayer" autoplay muted playsinline></video>
-
-  <div id="miniVideoContainer">
-    <video id="miniVideoPlayer" autoplay muted playsinline></video>
-  </div>
-
-  <div class="overlay">
-    <div id="chatBox"></div>
-    <div class="chat-input">
-      <input type="text" id="chatInput" placeholder="Scrivi un messaggio..." />
-      <button onclick="sendMessage()">Invia</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  // Mini video drag
-  (function () {
-    const mini = document.getElementById('miniVideoContainer');
-    let isDragging = false, startX, startY, origX, origY;
-
-    mini.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      const rect = mini.getBoundingClientRect();
-      origX = rect.left;
-      origY = rect.top;
-      e.preventDefault();
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      mini.style.left = origX + dx + 'px';
-      mini.style.top = origY + dy + 'px';
-    });
-
-    document.addEventListener('mouseup', () => {
-      isDragging = false;
-    });
-  })();
-
-  function startLive() {
-    const mainFile = document.getElementById('videoInput').files[0];
-    const miniFile = document.getElementById('miniVideoInput').files[0];
-
-    if (!mainFile) {
-      alert("Seleziona un video principale per continuare.");
-      return;
-    }
-
-    const mainPlayer = document.getElementById('videoPlayer');
-    mainPlayer.src = URL.createObjectURL(mainFile);
-    mainPlayer.load();
-    mainPlayer.play().catch(() => {
-      alert("Tocca lo schermo per avviare il video principale.");
-    });
-
-    if (miniFile) {
-      const miniPlayer = document.getElementById('miniVideoPlayer');
-      miniPlayer.src = URL.createObjectURL(miniFile);
-      miniPlayer.load();
-      miniPlayer.play();
-      document.getElementById('miniVideoContainer').style.display = 'block';
-    }
-
-    document.getElementById('upload').style.display = 'none';
-    document.getElementById('videoContainer').style.display = 'block';
-    document.getElementById('chatBox').innerHTML = '';
-  }
-
-  function sendMessage() {
-    const input = document.getElementById('chatInput');
-    const message = input.value.trim();
-    if (message === "") return;
-
-    const chatBox = document.getElementById('chatBox');
-    const div = document.createElement('div');
-    div.className = 'chat-message';
-    div.textContent = '👤 Tu: ' + message;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-    input.value = '';
   }
 </script>
 
