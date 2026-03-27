@@ -1,1230 +1,212 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-            background: #000;
-            color: white;
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        #video-container {
-            position: fixed;
-            inset: 0;
-            z-index: 1;
-        }
-        
-        #my-cam {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            pointer-events: none;
-        }
-        
-        .top-bar {
-            height: 50px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            font-size: 14px;
-            pointer-events: auto;
-        }
-        
-        /* Chat completamente trasparente */
-        .chat-container {
-            margin-top: auto;
-            flex: 1;
-            max-height: 45vh;
-            display: flex;
-            flex-direction: column;
-            pointer-events: auto;
-            padding-bottom: 10px;
-        }
-        
-        #chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            scrollbar-width: thin;
-        }
-        
-        .message {
-            display: flex;
-            gap: 10px;
-            animation: fadeIn 0.4s ease forwards;
-        }
-        
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ff00b7, #00f5ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            flex-shrink: 0;
-        }
-        
-        .username {
-            font-size: 13.5px;
-            color: #ff00b7;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-        
-        .message-text {
-            font-size: 15.5px;
-            line-height: 1.45;
-            background: rgba(255,255,255,0.08);
-            padding: 10px 15px;
-            border-radius: 18px 18px 18px 8px;
-            max-width: 80%;
-            backdrop-filter: blur(3px);
-        }
-        
-        .my-message {
-            align-self: flex-end;
-            background: rgba(0, 245, 255, 0.25);
-            padding: 10px 15px;
-            border-radius: 18px 18px 8px 18px;
-            max-width: 72%;
-            font-size: 15.5px;
-        }
-        
-        .input-area {
-            height: 62px;
-            background: rgba(0, 0, 0, 0.5);
-            border-top: 1px solid rgba(255,255,255,0.12);
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            gap: 10px;
-        }
-        
-        #message-input {
-            flex: 1;
-            background: rgba(255,255,255,0.12);
-            border: none;
-            border-radius: 9999px;
-            padding: 14px 20px;
-            color: white;
-            font-size: 15.5px;
-            outline: none;
-        }
-        
-        .send-btn {
-            width: 44px;
-            height: 44px;
-            background: #00f5ff;
-            color: #000;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            cursor: pointer;
-        }
-        
-        .fallback {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 30;
-            text-align: center;
-            padding: 40px 20px;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIVE PRIVATA • MasterLuca</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    font-family:'Inter',sans-serif;
+    background:#000;
+    color:#fff;
+    height:100vh;
+    overflow:hidden;
+}
+
+#video-container {
+    position:fixed;
+    inset:0;
+}
+
+#my-cam {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.overlay {
+    position:fixed;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+}
+
+.top-bar {
+    height:50px;
+    background:rgba(0,0,0,0.5);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    font-size:14px;
+}
+
+.chat-container {
+    margin-top:auto;
+    display:flex;
+    flex-direction:column;
+    max-height:45vh;
+}
+
+#chat-messages {
+    flex:1;
+    overflow-y:auto;
+    padding:15px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.message { 
+    display:flex; 
+    gap:10px; 
+}
+
+.avatar {
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    background:#00f5ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.message-text {
+    background:rgba(255,255,255,0.1);
+    padding:10px;
+    border-radius:15px;
+    max-width:80%;
+}
+
+.my-message {
+    align-self:flex-end;
+    background:#00f5ff;
+    color:#000;
+    padding:10px;
+    border-radius:15px;
+    max-width:75%;
+}
+
+.input-area {
+    display:flex;
+    padding:10px;
+    background:#111;
+    gap:10px;
+}
+
+#message-input {
+    flex:1;
+    padding:10px 15px;
+    border:none;
+    border-radius:20px;
+    outline:none;
+}
+
+.send-btn {
+    width:42px;
+    height:42px;
+    background:#00f5ff;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-size:18px;
+}
+</style>
 </head>
-<body>
-    <div id="video-container">
-        <video id="my-cam" autoplay playsinline muted></video>
-        
-        <div id="fallback" class="fallback">
-            <div style="font-size: 90px; margin-bottom: 20px;">📹</div>
-            <h2>Webcam non attiva</h2>
-            <p style="margin: 15px 0 30px; opacity: 0.9;">
-                Sessione privata con MasterLuca<br>
-                Clicca qui sotto per attivare la tua camera
-            </p>
-            <button onclick="startWebcam()" 
-                    style="padding: 15px 40px; background: #00f5ff; color: #000; border: none; border-radius: 9999px; font-weight: 700; font-size: 16px;">
-                ATTIVA LA WEBCAM
-            </button>
-        </div>
-    </div>
 
-    <div class="overlay">
-        <div class="top-bar">
-            <span>🔒 LIVE PRIVATA</span>
-            <span>MasterLuca • 1:1</span>
-        </div>
-        
-        <div class="chat-container">
-            <div id="chat-messages"></div>
-            
-            <div class="input-area">
-                <input type="text" id="message-input" 
-                       placeholder="Rispondi qui (es. fatto, sì Master...)" 
-                       onkeypress="if(event.key==='Enter') handleUserReply()">
-                <div class="send-btn" onclick="handleUserReply()">↑</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const MASTER = { name: "MasterLuca", emoji: "👑" };
-
-        const commands = [
-            "Ciao. Sono MasterLuca. Questa è la nostra sessione privata. Sei pronto a obbedirmi completamente?",
-            "Avvicinati alla webcam e fammi vedere chiaramente il tuo viso.",
-            "Togliti la maglietta lentamente. Voglio vedere il tuo petto nudo.",
-            "Toccati i capezzoli per me, piano, mentre mi guardi.",
-            "Abbassa i pantaloni. Fammi vedere le mutande.",
-            "Girati di schiena e piegati leggermente.",
-            "Togliti le mutande molto lentamente. Voglio vederti nudo.",
-            "Mostrami il tuo cazzo da vicino alla cam.",
-            "Inizia a segarti molto lentamente per me.",
-            "Aumenta il ritmo, ma non venire ancora.",
-            "Fermati. Girati di schiena e mostrami il culo.",
-            "Toccati il culo mentre ti guardo.",
-            "Girati di fronte e segati con due mani.",
-            "Più veloce ora.",
-            "Rallenta e stuzzica solo la punta.",
-            "Alzati in piedi e mostrami tutto il corpo.",
-            "Piega le ginocchia e continua.",
-            "Fermati. Voglio vederti pulsare.",
-            "Apri le natiche e mostrami il buco.",
-            "Segati velocemente adesso. Stai per venire per me?",
-            "Non fermarti. Sborra tutto per me.",
-            "Mostrami il tuo carico sulla pancia.",
-            "Bravo. Rimani nudo ancora un momento.",
-            "Hai obbedito molto bene."
-        ];
-
-        let currentIndex = 0;
-        let timer = null;
-
-        function addMasterMessage(text) {
-            const chat = document.getElementById("chat-messages");
-            const msg = document.createElement("div");
-            msg.className = "message";
-            msg.innerHTML = `
-                <div class="avatar">${MASTER.emoji}</div>
-                <div>
-                    <div class="username">${MASTER.name}</div>
-                    <div class="message-text">${text}</div>
-                </div>
-            `;
-            chat.appendChild(msg);
-            chat.scrollTop = chat.scrollHeight;
-            if (chat.children.length > 28) chat.removeChild(chat.children[0]);
-        }
-
-        function addMyMessage(text) {
-            const chat = document.getElementById("chat-messages");
-            const msg = document.createElement("div");
-            msg.className = "my-message";
-            msg.textContent = text;
-            chat.appendChild(msg);
-            chat.scrollTop = chat.scrollHeight;
-        }
-
-        function startCommands() {
-            if (currentIndex >= commands.length) return;
-            addMasterMessage(commands[currentIndex]);
-            currentIndex++;
-            timer = setTimeout(startCommands, 13000 + Math.random() * 9000);
-        }
-
-        window.handleUserReply = function() {
-            const input = document.getElementById("message-input");
-            const text = input.value.trim();
-            if (!text) return;
-            
-            addMyMessage(text);
-            input.value = "";
-            
-            const keywords = ["fatto","sì","ok","master","pronto","continua"];
-            if (keywords.someimer);
-                
-                setTimeout(() => {
-                    if (currentIndex < commands.length) {
-                        addMasterMessage("Bene.");
-                        setTimeout(() => {
-                            addMasterMessage(commands[currentIndex]);
-                            currentIndex++;
-                            timer = setTimeout(startCommands, 11500 + Math.random() * 7500);
-                        }, 1300);
-                    }
-                }, 800);
-            }
-        };
-
-        async function startWebcam() {
-            const video = document.getElementById("my-cam");
-            const fallback = document.getElementById("fallback");
-            
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: "user" }, 
-                    audio: false 
-                });
-                video.srcObject = stream;
-                fallback.style.display = "none";
-            } catch (e) {
-                fallback.style.display = "flex";
-            }
-        }
-
-        function init() {
-            startWebcam();
-            setTimeout(startCommands, 1400);
-        }
-
-        window.onload = init;
-    </script>
-</body>
-</html>            position: fixed;
-            inset: 0;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            pointer-events: none;
-        }
-        
-        /* Top bar minimalissima */
-        .top-bar {
-            height: 48px;
-            background: rgba(0, 0, 0, 0.35);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            font-size: 13.5px;
-            pointer-events: auto;
-            justify-content: space-between;
-            opacity: 0.9;
-        }
-        
-        /* Chat ultra-trasparente senza header */
-        .chat-container {
-            margin-top: auto;
-            height: 42vh;
-            background: rgba(0, 0, 0, 0.28);
-            backdrop-filter: blur(10px);
-            display: flex;
-            flex-direction: column;
-            pointer-events: auto;
-        }
-        
-        #chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 18px 22px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(0, 245, 255, 0.5) transparent;
-        }
-        
-        .message {
-            display: flex;
-            gap: 12px;
-            animation: fadeIn 0.35s ease forwards;
-        }
-        
-        .avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ff00b7, #00f5ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            flex-shrink: 0;
-        }
-        
-        .username {
-            font-size: 13.5px;
-            color: #ff00b7;
-            font-weight: 600;
-            margin-bottom: 3px;
-        }
-        
-        .message-text {
-            font-size: 15.8px;
-            line-height: 1.45;
-            background: rgba(255, 255, 255, 0.07);
-            padding: 10px 16px;
-            border-radius: 18px 18px 18px 7px;
-            max-width: 78%;
-        }
-        
-        .my-message {
-            align-self: flex-end;
-            background: rgba(0, 245, 255, 0.22);
-            padding: 10px 16px;
-            border-radius: 18px 18px 7px 18px;
-            max-width: 68%;
-            font-size: 15.8px;
-        }
-        
-        .input-area {
-            height: 60px;
-            background: rgba(0, 0, 0, 0.45);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            align-items: center;
-            padding: 0 18px;
-            gap: 12px;
-        }
-        
-        #message-input {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.10);
-            border: none;
-            border-radius: 9999px;
-            padding: 13px 20px;
-            color: white;
-            font-size: 15.5px;
-            outline: none;
-        }
-        
-        .send-btn {
-            width: 42px;
-            height: 42px;
-            background: rgba(0, 245, 255, 0.85);
-            color: #000;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 21px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        .send-btn:hover {
-            transform: scale(1.12);
-        }
-        
-        .fallback {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 20;
-            text-align: center;
-            padding: 40px;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(18px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
-</head>
-<body>
-    <div id="video-container">
-        <video id="my-cam" autoplay playsinline muted></video>
-        
-        <div id="fallback" class="fallback">
-            <div style="font-size: 78px; margin-bottom: 20px;">📹</div>
-            <h2>Webcam non attiva</h2>
-            <p style="margin: 16px 0 28px; max-width: 320px; opacity: 0.85;">
-                Sessione privata con MasterLuca<br>
-                Attiva la tua camera per iniziare
-            </p>
-            <button onclick="startWebcam()" 
-                    style="padding: 14px 36px; background: #00f5ff; color: #000; border: none; border-radius: 9999px; font-weight: 600; font-size: 16px; cursor: pointer;">
-                ATTIVA WEBCAM
-            </button>
-        </div>
-    </div>
-
-    <div class="overlay">
-        <!-- Top bar molto leggera -->
-        <div class="top-bar">
-            <span>🔒 LIVE PRIVATA</span>
-            <span>1:1 • MasterLuca</span>
-        </div>
-        
-        <!-- Chat senza header / striscia -->
-        <div class="chat-container">
-            <div id="chat-messages"></div>
-            
-            <div class="input-area">
-                <input type="text" id="message-input" placeholder="Rispondi qui (es. fatto, sì Master...)" 
-                       onkeypress="if(event.key==='Enter') handleUserReply()">
-                <div class="send-btn" onclick="handleUserReply()">↑</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const MASTER = {
-            name: "MasterLuca",
-            emoji: "👑"
-        };
-
-        const commands = [
-            "Ciao. Sono MasterLuca. Questa è la nostra sessione privata. Sei pronto a obbedirmi completamente?",
-            "Avvicinati alla webcam e fammi vedere chiaramente il tuo viso.",
-            "Togliti la maglietta lentamente. Voglio vedere il tuo petto nudo.",
-            "Toccati i capezzoli per me, piano, mentre mi guardi.",
-            "Abbassa i pantaloni. Fammi vedere le mutande.",
-            "Girati di schiena e piegati leggermente.",
-            "Togliti le mutande molto lentamente. Voglio vederti nudo.",
-            "Mostrami il tuo cazzo da vicino alla cam.",
-            "Inizia a segarti molto lentamente per me.",
-            "Aumenta il ritmo, ma non venire ancora.",
-            "Fermati. Girati di schiena e mostrami il culo.",
-            "Toccati il culo mentre ti guardo.",
-            "Girati di fronte e segati con due mani.",
-            "Più veloce ora.",
-            "Rallenta e stuzzica solo la punta.",
-            "Alzati in piedi e mostrami tutto il corpo.",
-            "Piega le ginocchia e continua.",
-            "Fermati. Voglio vederti pulsare.",
-            "Apri le natiche e mostrami il buco.",
-            "Segati velocemente adesso. Stai per venire per me?",
-            "Non fermarti. Sborra tutto per me.",
-            "Mostrami il tuo carico sulla pancia.",
-            "Bravo. Rimani nudo ancora un momento.",
-            "Hai obbedito molto bene."
-        ];
-
-        let currentIndex = 0;
-        let timer = null;
-
-        function addMasterMessage(text) {
-            const chat = document.getElementById("chat-messages");
-            const msg = document.createElement("div");
-            msg.className = "message";
-            msg.innerHTML = `
-                <div class="avatar">${MASTER.emoji}</div>
-                <div class="message-content">
-                    <div class="username">${MASTER.name}</div>
-                    <div class="message-text">${text}</div>
-                </div>
-            `;
-            chat.appendChild(msg);
-            chat.scrollTop = chat.scrollHeight;
-            
-            if (chat.children.length > 25) chat.removeChild(chat.children[0]);
-        }
-
-        function addMyMessage(text) {
-            const chat = document.getElementById("chat-messages");
-            const msg = document.createElement("div");
-            msg.className = "my-message";
-            msg.textContent = text;
-            chat.appendChild(msg);
-            chat.scrollTop = chat.scrollHeight;
-        }
-
-        function startCommands() {
-            if (currentIndex >= commands.length) return;
-            
-            addMasterMessage(commands[currentIndex]);
-            currentIndex++;
-            
-            const delay = 12500 + Math.random() * 9500;
-            timer = setTimeout(startCommands, delay);
-        }
-
-        window.handleUserReply = function() {
-            const input = document.getElementById("message-input");
-            const text = input.value.trim();
-            if (!text) return;
-            
-            addMyMessage(text);
-            input.value = "";
-            
-            const keywords = ["fatto", "sì", "ok", "master", "pronto", "continua", "fatto master"];
-            if (keywords.some(k => text.toLowerCase().includes(k)) && currentIndex < commands.length) {
-                if (timer) clearTimeout(timer);
-                
-                setTimeout(() => {
-                    if (currentIndex < commands.length) {
-                        addMasterMessage("Bene.");
-                        setTimeout(() => {
-                            addMasterMessage(commands[currentIndex]);
-                            currentIndex++;
-                            timer = setTimeout(startCommands, 11500 + Math.random() * 7500);
-                        }, 1200);
-                    }
-                }, 700);
-            }
-        };
-
-        async function startWebcam() {
-            const video = document.getElementById("my-cam");
-            const fallback = document.getElementById("fallback");
-            
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: "user" }, 
-                    audio: false 
-                });
-                video.srcObject = stream;
-                fallback.style.display = "none";
-            } catch (e) {
-                fallback.style.display = "flex";
-            }
-        }
-
-        function init() {
-            startWebcam();
-            
-            setTimeout(() => {
-                startCommands();
-            }, 1400);
-        }
-
-        window.onload = init;
-    </script>
-</body>
-</html>        #my-cam {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: all 0.4s ease;
-        }
-        
-        .fallback {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, #1a1a2e, #0f0f1f);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            z-index: 2;
-            color: var(--primary);
-        }
-        
-        .fallback-icon {
-            font-size: 92px;
-            margin-bottom: 20px;
-            opacity: 0.9;
-        }
-        
-        .overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            pointer-events: none;
-        }
-        
-        .top-bar {
-            height: 72px;
-            background: linear-gradient(to bottom, rgba(10,10,20,0.98), rgba(10,10,20,0.85));
-            backdrop-filter: blur(20px);
-            display: flex;
-            align-items: center;
-            padding: 0 30px;
-            gap: 20px;
-            border-bottom: 1px solid rgba(0, 245, 255, 0.25);
-            pointer-events: auto;
-        }
-        
-        .logo {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 28px;
-            font-weight: 600;
-            letter-spacing: -1.5px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .private-badge {
-            background: linear-gradient(90deg, var(--accent), #c3008a);
-            color: #000;
-            font-weight: 700;
-            font-size: 13.5px;
-            padding: 6px 18px;
-            border-radius: 9999px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 0 20px rgba(255, 0, 183, 0.4);
-        }
-        
-        .chat-container {
-            margin-top: auto;
-            height: 44vh;
-            background: var(--glass);
-            backdrop-filter: blur(24px);
-            border-top: 1px solid rgba(0, 245, 255, 0.3);
-            display: flex;
-            flex-direction: column;
-            pointer-events: auto;
-            box-shadow: 0 -20px 50px rgba(0,0,0,0.8);
-        }
-        
-        .chat-header {
-            height: 58px;
-            background: rgba(255,0,183,0.15);
-            display: flex;
-            align-items: center;
-            padding: 0 28px;
-            font-weight: 600;
-            font-size: 15.5px;
-            color: var(--accent);
-            border-bottom: 1px solid rgba(255,0,183,0.25);
-        }
-        
-        #chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 24px 28px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary) transparent;
-        }
-        
-        .message {
-            display: flex;
-            gap: 16px;
-            animation: messagePop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        .avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ff00b7, #00f5ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            flex-shrink: 0;
-            box-shadow: 0 0 25px rgba(255,0,183,0.6);
-        }
-        
-        .username {
-            font-weight: 700;
-            color: var(--accent);
-            font-size: 15.5px;
-        }
-        
-        .message-text {
-            background: rgba(255,255,255,0.09);
-            padding: 13px 20px;
-            border-radius: 22px 22px 22px 8px;
-            font-size: 16.2px;
-            line-height: 1.5;
-            max-width: 82%;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        
-        .my-message {
-            align-self: flex-end;
-            background: rgba(0,245,255,0.22);
-            color: white;
-            padding: 13px 20px;
-            border-radius: 22px 22px 8px 22px;
-            max-width: 72%;
-            font-size: 16px;
-        }
-        
-        .input-area {
-            height: 72px;
-            background: rgba(10,10,20,0.85);
-            border-top: 1px solid rgba(255,255,255,0.12);
-            display: flex;
-            align-items: center;
-            padding: 0 28px;
-            gap: 16px;
-        }
-        
-        #message-input {
-            flex: 1;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(0,245,255,0.3);
-            border-radius: 9999px;
-            padding: 16px 24px;
-            color: white;
-            font-size: 16px;
-            outline: none;
-        }
-        
-        .send-btn {
-            width: 52px;
-            height: 52px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            color: #000;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(0,245,255,0.5);
-        }
-        
-        .send-btn:hover {
-            transform: scale(1.15) rotate(15deg);
-        }
-        
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 120px;
-            font-weight: 900;
-            opacity: 0.06;
-            color: var(--primary);
-            pointer-events: none;
-            z-index: 3;
-            font-family: 'Space Grotesk', sans-serif;
-            letter-spacing: -20px;
-            user-select: none;
-        }
-        
-        @keyframes messagePop {
-            from { opacity: 0; transform: translateY(35px) scale(0.92); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        
-        @keyframes livePulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-    </style>
-</head>
-<body>
-    <!-- Video Container -->
-    <div id="video-container">
-        <video id="my-cam" autoplay playsinline muted></video>
-        <div id="fallback" class="fallback" style="display: none;">
-            <div class="fallback-icon">📹</div>
-            <h2>La tua webcam non è attiva</h2>
-            <p style="margin-top:12px; opacity:0.8; max-width:320px;">
-                Clicca sul pulsante qui sotto per attivare la tua camera.<br>
-                Questa è una sessione privata solo con <strong>MasterLuca</strong>.
-            </p>
-            <button onclick="startWebcam()" 
-                    style="margin-top:24px; padding:14px 32px; background:linear-gradient(90deg,#00f5ff,#ff00b7); color:#000; border:none; border-radius:9999px; font-weight:700; font-size:16px; cursor:pointer;">
-                ATTIVA LA MIA WEBCAM
-            </button>
-        </div>
-        <div class="watermark">PRIVATA</div>
-    </div>
-
-    <!-- Overlay -->
-    <div class="overlay">
-        <!-- Top Bar -->
-        <div class="top-bar">
-            <div class="logo">
-                🔒 LIVE PRIVATA
-            </div>
-            
-            <div class="private-badge">
-                👑 SOLO 1:1 • MasterLuca
-            </div>
-            
-            <div style="margin-left:auto; display:flex; align-items:center; gap:10px; font-size:14px; opacity:0.85;">
-                <span style="color:#00f5ff;">●</span> 
-                CONNESSO • Comando attivo
-            </div>
-        </div>
-        
-        <!-- Chat -->
-        <div class="chat-container">
-            <div class="chat-header">
-                💬 CHAT PRIVATA — MasterLuca ti sta comandando
-            </div>
-            
-            <div id="chat-messages"></div>
-            
-            <div class="input-area">
-                <input type="text" id="message-input" placeholder="Rispondi qui (es. 'fatto', 'sì Master', 'pronto')..." 
-                       onkeypress="if(event.key === 'Enter') handleUserReply()">
-                <div class="send-btn" onclick="handleUserReply()">↑</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const MASTER = {
-            name: "MasterLuca",
-            emoji: "👑",
-            color: "#ff00b7"
-        };
-
-        // Sequenza ordinata di comandi (progressiva, senza ripetizioni)
-        const commandSequence = [
-            "Ciao... Sono MasterLuca e questa è la nostra sessione privata. Sei pronto a obbedirmi completamente stasera?",
-            "Bene. Avvicinati alla webcam e fammi vedere chiaramente il tuo viso.",
-            "Ottimo. Ora togliti la maglietta lentamente. Voglio vedere il tuo petto nudo.",
-            "Toccati i capezzoli per me... piano, mentre mi guardi negli occhi.",
-            "Adesso abbassa i pantaloni. Fammi vedere le tue gambe e il rigonfiamento nelle mutande.",
-            "Girati di schiena, piegati leggermente e mostrami il culo.",
-            "Togliti le mutande... molto lentamente. Voglio vederti completamente nudo.",
-            "Mostrami il tuo cazzo da vicino. Voglio vedere quanto sei già eccitato.",
-            "Inizia a toccarti piano... segati molto lentamente per me.",
-            "Aumenta un po' il ritmo... ma non venire. Devi resistere per me.",
-            "Fermati. Girati di schiena, apri le gambe e mostrami tutto.",
-            "Toccati il culo mentre ti guardo... fammi vedere quanto sei obbediente.",
-            "Girati di nuovo di fronte. Ora segati con entrambe le mani.",
-            "Più veloce... voglio sentirti respirare forte.",
-            "Rallenta... stuzzica solo la cappella per me.",
-            "Alzati in piedi e mostrami tutto il corpo mentre continui a toccarti.",
-            "Piega le ginocchia e segati guardando dritto nella camera.",
-            "Fermati di nuovo. Voglio vederti pulsare senza venire.",
-            "Girati, apri le natiche e mostrami il buco mentre ti tocchi davanti.",
-            "Tornati di fronte. Segati velocemente adesso... stai per venire?",
-            "Non fermarti. Continua fino alla fine. Voglio vederti sborrare tutto per me.",
-            "Bravo... mostrami il tuo carico sulla pancia o sul petto.",
-            "Leccati le dita se vuoi... dimostrarmi quanto sei sottomesso.",
-            "Rimani nudo ancora un po'... respira profondamente.",
-            "Hai obbedito molto bene. Vuoi che ti comandi di nuovo domani?"
-        ];
-
-        let currentIndex = 0;
-        let autoTimer = null;
-
-        function addMasterMessage(text) {
-            const chat = document.getElementById("chat-messages");
-            const div = document.createElement("div");
-            div.className = "message";
-            div.innerHTML = `
-                <div class="avatar">${MASTER.emoji}</div>
-                <div>
-                    <div class="username">${MASTER.name}</div>
-                    <div class="message-text">${text}</div>
-                </div>
-            `;
-            chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight;
-            
-            if (chat.children.length > 35) chat.removeChild(chat.children[0]);
-        }
-
-        function addMyMessage(text) {
-            const chat = document.getElementById("chat-messages");
-            const div = document.createElement("div");
-            div.className = "my-message";
-            div.textContent = text;
-            chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight;
-        }
-
-        function startCommandSequence() {
-            if (currentIndex >= commandSequence.length) return;
-            
-            addMasterMessage(commandSequence[currentIndex]);
-            currentIndex++;
-            
-            const nextDelay = 13500 + Math.random() * 9500;
-            autoTimer = setTimeout(startCommandSequence, nextDelay);
-        }
-
-        window.handleUserReply = function() {
-            const input = document.getElementById("message-input");
-            const text = input.value.trim();
-            if (!text) return;
-            
-            addMyMessage(text);
-            input.value = "";
-            
-            const obedience = ["fatto", "sì", "ok", "master", "pronto", "continua", "fatto master", "sì master"];
-            const lowerText = text.toLowerCase();
-            
-            if (obedience.some(w => lowerText.includes(w)) && currentIndex < commandSequence.length) {
-                if (autoTimer) clearTimeout(autoTimer);
-                
-                setTimeout(() => {
-                    addMasterMessage("Bravo... mi piace quando obbedisci subito.");
-                    setTimeout(() => {
-                        if (currentIndex < commandSequence.length) {
-                            addMasterMessage(commandSequence[currentIndex]);
-                            currentIndex++;
-                            autoTimer = setTimeout(startCommandSequence, 11000 + Math.random() * 8000);
-                        }
-                    }, 1300);
-                }, 700);
-            }
-        };
-
-        async function startWebcam() {
-            const video = document.getElementById("my-cam");
-            const fallback = document.getElementById("fallback");
-            
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "user", width: { ideal: 1920 }, height: { ideal: 1080 } },
-                    audio: false
-                });
-                video.srcObject = stream;
-                fallback.style.display = "none";
-                console.log("%c✅ Webcam attivata con successo", "color:#00f5ff; font-weight:700");
-            } catch (err) {
-                console.warn("Impossibile accedere alla webcam:", err);
-                fallback.style.display = "flex";
-            }
-        }
-
-        function init() {
-            console.log("%c🔒 Sessione privata 1:1 con MasterLuca avviata", "background:#ff00b7;color:#fff;padding:5px 10px;border-radius:6px;font-weight:700");
-            
-            // Prova ad avviare la webcam
-            startWebcam();
-            
-            // Inizia la chat dopo 1.2 secondi
-            setTimeout(() => {
-                startCommandSequence();
-            }, 1200);
-        }
-
-        window.onload = init;
-    </script>
-</body>
-</html>    }
-    .overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 20px;
-      pointer-events: none;
-      z-index: 5;
-    }
-    #chatBox {
-      max-height: 30%;
-      overflow-y: auto;
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      pointer-events: auto;
-      color: white;
-    }
-      
-    }
-    .chat-message img {
-      max-width: 150px;
-      max-height: 150px;
-      border-radius: 8px;
-      margin-top: 5px;
-    }
-    .chat-input {
-      display: flex;
-      margin-bottom: 6px;
-      gap: 5px;
-      pointer-events: auto;
-    }
-    input[type="text"] {
-      flex: 1;
-      padding: 8px;
-      font-size: 1em;
-      border-radius: 6px;
-      border: none;
-    }
-    button {
-      padding: 8px 12px;
-      font-size: 1em;
-      border: none;
-      background: #00cc66;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    #miniVideoContainer {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 200px;
-      height: 200px;
-      overflow: hidden;
-      border: 2px solid white;
-      border-radius: 10px;
-      z-index: 6;
-      cursor: move;
-      display: none;
-    }
-    #miniVideoPlayer {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  </style>
-</head>
 <body>
 
-<div id="upload">
-  <h3>Carica il video principale</h3>
-  <input type="file" id="videoInput" accept="video/*" />
-  <h3>Carica il video per la simulazione videochiamata</h3>
-  <input type="file" id="miniVideoInput" accept="video/*" />
-  <br><br>
-  <button onclick="startLive()">Avvia Live</button>
+<div id="video-container">
+    <video id="my-cam" autoplay muted playsinline></video>
 </div>
 
-<div id="videoContainer">
-  <video id="videoPlayer" autoplay playsinline controls></video>
-
-  <div id="miniVideoContainer">
-    <video id="miniVideoPlayer" autoplay playsinline controls></video>
-  </div>
-
-  <div class="overlay">
-    <div id="chatBox"></div>
-    <div class="chat-input">
-      <input type="text" id="chatInput" placeholder="Scrivi un messaggio..." />
-      <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="sendImage(event)" />
-      <button onclick="document.getElementById('imageInput').click()">📷</button>
-      <button onclick="sendMessage()">Invia</button>
+<div class="overlay">
+    <div class="top-bar">
+        <span>🔒 LIVE PRIVATA</span>
+        <span>MasterLuca • 1:1</span>
     </div>
-  </div>
+
+    <div class="chat-container">
+        <div id="chat-messages"></div>
+
+        <div class="input-area">
+            <input id="message-input" placeholder="Scrivi..."
+            onkeydown="if(event.key==='Enter') sendMessage()">
+            <div class="send-btn" onclick="sendMessage()">↑</div>
+        </div>
+    </div>
 </div>
 
 <script>
-  // Drag del mini video
-  (function () {
-    const mini = document.getElementById('miniVideoContainer');
-    let isDragging = false, startX, startY, origX, origY;
+const messages = [
+    "Ciao, benvenuto nella live.",
+    "Tutto ok?",
+    "Come va la connessione?",
+    "Riesci a vedermi bene?",
+    "Perfetto 👍",
+    "Continuiamo pure."
+];
 
-    mini.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      const rect = mini.getBoundingClientRect();
-      origX = rect.left;
-      origY = rect.top;
-      e.preventDefault();
-    });
+let index = 0;
 
-    document.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      mini.style.left = origX + dx + 'px';
-      mini.style.top = origY + dy + 'px';
-    });
+function addMessage(text, isMine = false) {
+    const chat = document.getElementById("chat-messages");
+    const div = document.createElement("div");
 
-    document.addEventListener('mouseup', () => {
-      isDragging = false;
-    });
-  })();
-
-  function startLive() {
-    const mainFile = document.getElementById('videoInput').files[0];
-    const miniFile = document.getElementById('miniVideoInput').files[0];
-
-    if (!mainFile) {
-      alert("Seleziona un video principale per continuare.");
-      return;
+    if (isMine) {
+        div.className = "my-message";
+        div.textContent = text;
+    } else {
+        div.className = "message";
+        div.innerHTML = `
+            <div class="avatar">👑</div>
+            <div class="message-text">${text}</div>
+        `;
     }
 
-    const mainPlayer = document.getElementById('videoPlayer');
-    mainPlayer.src = URL.createObjectURL(mainFile);
-    mainPlayer.load();
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
 
-    mainPlayer.play().catch(() => {
-      alert("Tocca lo schermo per avviare il video principale con audio.");
-    });
+function autoMessages() {
+    if (index >= messages.length) return;
 
-    if (miniFile) {
-      const miniPlayer = document.getElementById('miniVideoPlayer');
-      miniPlayer.src = URL.createObjectURL(miniFile);
-      miniPlayer.load();
-      miniPlayer.play().catch(() => {
-        alert("Tocca lo schermo per avviare anche il mini video con audio.");
-      });
-      document.getElementById('miniVideoContainer').style.display = 'block';
+    addMessage(messages[index]);
+    index++;
+
+    // Ritardo realistico (10 - 17 secondi)
+    setTimeout(autoMessages, 10000 + Math.random() * 7000);
+}
+
+function sendMessage() {
+    const input = document.getElementById("message-input");
+    const text = input.value.trim();
+    if (!text) return;
+
+    addMessage(text, true);
+    input.value = "";
+}
+
+async function startWebcam() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        document.getElementById("my-cam").srcObject = stream;
+    } catch (e) {
+        alert("Impossibile attivare la webcam");
     }
+}
 
-    document.getElementById('upload').style.display = 'none';
-    document.getElementById('videoContainer').style.display = 'block';
-    document.getElementById('chatBox').innerHTML = '';
-  }
-
-  function sendMessage() {
-    const input = document.getElementById('chatInput');
-    const message = input.value.trim();
-    if (message === "") return;
-
-    const chatBox = document.getElementById('chatBox');
-    const div = document.createElement('div');
-    div.className = 'chat-message';
-    div.textContent = 'Tu: ' + message;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-    input.value = '';
-  }
-
-  function sendImage(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const img = document.createElement('img');
-      img.src = e.target.result;
-
-      const chatBox = document.getElementById('chatBox');
-      const div = document.createElement('div');
-      div.className = 'chat-message';
-      div.innerHTML = 'Tu: <br>';
-      div.appendChild(img);
-      chatBox.appendChild(div);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    };
-    reader.readAsDataURL(file);
-    event.target.value = ""; // reset input
-  }
+// Avvio
+startWebcam();
+autoMessages();
 </script>
 
 </body>
